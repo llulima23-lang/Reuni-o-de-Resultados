@@ -266,3 +266,10 @@ body {
   .quartil-grid { grid-template-columns:1fr; }
   .capa-hero h1 { font-size:1.6rem; }
 }
+
+/* ---- FLOATING NAV ---- */
+.nav-btn-float {
+  background: transparent; color: var(--navy); border: none; font-weight: 700; font-size: 0.82rem; padding: 6px 12px; cursor: pointer; border-radius: 20px; transition: all 0.2s; display: flex; align-items: center; gap: 5px;
+}
+.nav-btn-float:hover:not(:disabled) { background: var(--green-light); color: var(--green); }
+.nav-btn-float:disabled { opacity: 0.3; cursor: not-allowed; }

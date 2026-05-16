@@ -292,6 +292,13 @@
       <div id="dados-gerais-content"></div>
     </div>
 
+    <!-- FLOATING NAV -->
+    <div id="floating-nav" style="position:fixed; bottom:24px; right:36px; display:flex; gap:12px; z-index:100; background:var(--card); padding:8px 12px; border-radius:30px; box-shadow:0 4px 20px rgba(0,0,0,0.12); border:1px solid var(--border);">
+      <button class="nav-btn-float" onclick="navPrevNext(-1)" id="btn-nav-prev" disabled><span>←</span> Anterior</button>
+      <div style="width:1px; background:var(--border); margin:4px 0;"></div>
+      <button class="nav-btn-float" onclick="navPrevNext(1)" id="btn-nav-next">Próximo <span>→</span></button>
+    </div>
+
   </div><!-- /content -->
 </div><!-- /main -->
 
@@ -323,8 +330,30 @@ document.querySelectorAll('.nav-item').forEach(item => {
     document.getElementById('sec-' + sec).classList.add('active');
     item.classList.add('active');
     document.getElementById('topbar-title').textContent = SEC_TITLES[sec];
+    if(typeof updateFloatNav === 'function') updateFloatNav();
   });
 });
+
+function navPrevNext(dir) {
+  const items = Array.from(document.querySelectorAll('.nav-item'));
+  const idx = items.findIndex(el => el.classList.contains('active'));
+  if (idx > -1) {
+    const nextIdx = idx + dir;
+    if (nextIdx >= 0 && nextIdx < items.length) {
+      items[nextIdx].click();
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+  }
+}
+
+function updateFloatNav() {
+  const items = Array.from(document.querySelectorAll('.nav-item'));
+  const idx = items.findIndex(el => el.classList.contains('active'));
+  document.getElementById('btn-nav-prev').disabled = (idx <= 0);
+  document.getElementById('btn-nav-next').disabled = (idx >= items.length - 1);
+}
+// Init float nav
+updateFloatNav();
 
 // ========================================================
 // TABELA CAPACITY
