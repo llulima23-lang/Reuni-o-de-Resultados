@@ -132,8 +132,10 @@ async function lerExcel(file) {
       try {
         const wb = XLSX.read(e.target.result, {type:'array'});
         const toArr = (nome) => {
-          if (!wb.SheetNames.includes(nome)) return null;
-          return XLSX.utils.sheet_to_json(wb.Sheets[nome], {header:1, defval:null});
+          const target = nome.toUpperCase().trim();
+          const sheetName = wb.SheetNames.find(n => n.toUpperCase().trim() === target);
+          if (!sheetName) return null;
+          return XLSX.utils.sheet_to_json(wb.Sheets[sheetName], {header:1, defval:null});
         };
 
         // CAPACITY
