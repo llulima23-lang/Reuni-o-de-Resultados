@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reunião de Resultados — MF 2026</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-database-compat.js"></script>
+</head>
+<body>
+
+<!-- ======== SIDEBAR ======== -->
+<aside id="sidebar">
+  <div class="sidebar-logo" style="display:flex;justify-content:center;padding:24px 0 16px 0;">
+    <img id="sidebar-logo-img" alt="MF" style="height:55px;width:65px;object-fit:cover;object-position:left;" />
+  </div>
+  <nav>
+    <a class="nav-item active" data-sec="capa"><span class="icon">🏠</span><span>Capa</span></a>
+    <a class="nav-item" data-sec="dadosgerais"><span class="icon">📋</span><span>Dados Gerais</span></a>
+    <a class="nav-item" data-sec="capacity"><span class="icon">👥</span><span>Capacity</span></a>
+    <a class="nav-item" data-sec="funil"><span class="icon">📊</span><span>Funil</span></a>
+    <a class="nav-item" data-sec="quartil"><span class="icon">🏆</span><span>Quartil 2026</span></a>
+    <a class="nav-item" data-sec="digital"><span class="icon">💬</span><span>Ações Digitais</span></a>
+    <a class="nav-item" data-sec="mapadigital"><span class="icon">🗺️</span><span>Mapa Digital</span></a>
+    <a class="nav-item" data-sec="encerramento"><span class="icon">💡</span><span>Encerramento</span></a>
+  </nav>
+  <div style="padding:12px 16px;border-top:1px solid rgba(255,255,255,0.08);">
+    <label id="upload-label" style="display:flex;align-items:center;gap:8px;background:var(--navy-mid);color:#fff;border-radius:8px;padding:9px 12px;cursor:pointer;font-size:0.78rem;font-weight:600;transition:opacity 0.2s;" title="Clique para atualizar os dados com uma nova planilha Excel">
+      <span>📂</span><span>Atualizar Excel</span>
+      <input type="file" id="upload-excel" accept=".xlsx,.xls" style="display:none;">
+    </label>
+    <div id="upload-status" style="font-size:0.68rem;color:#7aad8a;text-align:center;margin-top:6px;"></div>
+  </div>
+  <div class="sidebar-footer">MF Operações · 2026</div>
+</aside>
+
+<!-- ======== MAIN ======== -->
+<div id="main">
+
+  <!-- TOP BAR -->
+  <header id="topbar">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <img id="topbar-logo-img" style="height:32px;background:#fff;border-radius:6px;padding:3px;" alt="MF">
+      <div>
+        <h1 id="topbar-title">Capa</h1>
+        <div class="meta" id="topbar-periodo">Período de Referência: Abril / Maio 2026</div>
+      </div>
+    </div>
+      <div style="display:flex; gap:10px;">
+        <button id="btn-ppt" class="btn-ppt" onclick="exportarPPT()">📥 Exportar PowerPoint (Nativo)</button>
+        <button id="btn-ppt-clone" class="btn-ppt" onclick="exportarPPTClone()" style="background:var(--lime);color:var(--navyDark);">📸 Exportar PowerPoint (Idêntico)</button>
+      </div>
+  </header>
+
+  <!-- CONTENT -->
+  <div id="content">
+
+    <!-- ===== CAPA ===== -->
+    <div id="sec-capa" class="section active">
+      <div class="capa-hero" style="min-height:420px;display:flex;flex-direction:column;justify-content:center;">
+        <div class="capa-logo" style="margin-bottom:30px;display:flex;justify-content:flex-start;">
+          <img id="capa-logo-img" alt="Meireles &amp; Freitas" style="height:100px;background:#fff;border-radius:12px;padding:12px 18px;" />
+        </div>
+        <div class="capa-tag">Reunião de Resultados</div>
+        <h1 style="font-size:2.8rem;font-weight:900;line-height:1.1;margin-bottom:12px;">MONITORAMENTO<br>OPERACIONAL · MF 2026</h1>
+        <p style="color:#90c8a0;font-size:1.05rem;">Período de Referência: <span id="capa-periodo">Abril / Maio 2026</span> — Operações Variadas</p>
+      </div>
+    </div>
+
+    <!-- ===== CAPACITY ===== -->
+    <div id="sec-capacity" class="section">
+      <div class="section-header">
+        <div class="icon-box">👥</div>
+        <div>
+          <h2>Capacity — Agentes por Operação</h2>
+          <p>Evolução mensal de Janeiro a Abril de 2026</p>
+        </div>
+      </div>
+
+      <div class="grid-4" style="margin-bottom:20px;">
+        <div class="kpi-card">
+          <div class="kpi-label">Jan</div>
+          <div class="kpi-value">16</div>
+          <div class="kpi-sub">Total de Agentes</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Fev</div>
+          <div class="kpi-value">16</div>
+          <div class="kpi-sub">Total de Agentes</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Mar</div>
+          <div class="kpi-value">17</div>
+          <div class="kpi-sub">Total de Agentes</div>
+          <div class="kpi-badge badge-up">▲ +1</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Abr</div>
+          <div class="kpi-value">22</div>
+          <div class="kpi-sub">Total de Agentes</div>
+          <div class="kpi-badge badge-up">▲ +5</div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-bottom:20px;">
+        <div class="card">
+          <h3>Agentes por Operação (Mensal)</h3>
+          <div class="chart-wrap"><canvas id="chart-capacity"></canvas></div>
+          <div class="insight"><b>ALARES</b> foi a única operação com crescimento relevante: de 7 para 17 agentes (<b>+143%</b>). As demais se mantiveram estáveis.</div>
+        </div>
+        <div class="card">
+          <h3>Evolução do Total de Agentes</h3>
+          <div class="chart-wrap"><canvas id="chart-capacity-total"></canvas></div>
+          <div class="insight">O crescimento total reflete a expansão da operação ALARES. <b>Março→Abril</b> foi o maior salto (+29%).</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Tabela Detalhada — Agentes por Operação</h3>
+        <table class="tbl" id="tbl-capacity"></table>
+      </div>
+    </div>
+
+    <!-- ===== FUNIL ===== -->
+    <div id="sec-funil" class="section">
+      <div class="section-header">
+        <div class="icon-box">📊</div>
+        <div>
+          <h2>Funil de Conversão</h2>
+          <p>Discagens → Alô → CPC → Promessa por Operação</p>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchFunilTab('abrilGeral',this)">Abril — Geral</button>
+        <button class="tab-btn" onclick="switchFunilTab('maio9Dias',this)">Maio — 9 Dias Úteis</button>
+        <button class="tab-btn" onclick="switchFunilTab('abril9Dias',this)">Abril — 9 Dias Úteis</button>
+      </div>
+
+      <div class="grid-2" style="margin-bottom:20px;">
+        <div class="card" style="grid-column: span 2;">
+          <h3>Funis por Operação</h3>
+          <div id="funil-images-container" style="display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-top:10px;"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Tabela Completa do Funil</h3>
+        <table class="tbl" id="tbl-funil"></table>
+        <div class="insight" id="funil-insight"></div>
+      </div>
+    </div>
+
+    <!-- ===== QUARTIL ===== -->
+    <div id="sec-quartil" class="section">
+      <div class="section-header">
+        <div class="icon-box">🏆</div>
+        <div>
+          <h2>Quartil 2026</h2>
+          <p>Dispersão e Média de Promessas por Quartil e Turno</p>
+        </div>
+      </div>
+
+      <div class="quartil-grid" style="margin-bottom:20px;">
+        <div class="quartil-card">
+          <h3>🕓 Turno TARDE <span class="q-turno-badge tarde">Tarde</span></h3>
+          <div class="q-grid">
+            <div class="q-col"><div class="q-name">1º Quartil</div><div class="q-val">494</div><div class="q-sub">Média Prom.</div></div>
+            <div class="q-col"><div class="q-name">2º Quartil</div><div class="q-val">318</div><div class="q-sub">Média Prom.</div></div>
+            <div class="q-col"><div class="q-name">3º Quartil</div><div class="q-val">193</div><div class="q-sub">Média Prom.</div></div>
+            <div class="q-col"><div class="q-name">4º Quartil</div><div class="q-val">109</div><div class="q-sub">Média Prom.</div></div>
+          </div>
+          <div class="q-divider"></div>
+          <div class="q-grid">
+            <div class="q-col"><div class="q-name">Dispersão</div><div class="q-val" style="color:#F79646">100%</div></div>
+            <div class="q-col"><div class="q-name">Dispersão</div><div class="q-val" style="color:#F79646">50%</div></div>
+            <div class="q-col"><div class="q-name">Dispersão</div><div class="q-val" style="color:#F79646">30%</div></div>
+            <div class="q-col"><div class="q-name">Dispersão</div><div class="q-val" style="color:#F79646">17%</div></div>
+          </div>
+          <div class="insight" style="margin-top:14px;">Queda progressiva e controlada do 1º ao 4º quartil. Boa linearidade.</div>
+        </div>
+        <div class="quartil-card">
+          <h3>🌅 Turno MANHÃ <span class="q-turno-badge manha">Manhã</span></h3>
+          <div class="q-grid">
+            <div class="q-col"><div class="q-name">1º Quartil</div><div class="q-val">471</div><div class="q-sub">Média Prom.</div></div>
+            <div class="q-col"><div class="q-name">2º Quartil</div><div class="q-val">283</div><div class="q-sub">Média Prom.</div></div>
+            <div class="q-col"><div class="q-name">3º Quartil</div><div class="q-val">246</div><div class="q-sub">Média Prom.</div></div>
+            <div class="q-col"><div class="q-name">4º Quartil</div><div class="q-val" style="color:#C0504D">35</div><div class="q-sub">Média Prom.</div></div>
+          </div>
+          <div class="q-divider"></div>
+          <div class="q-grid">
+            <div class="q-col"><div class="q-name">Dispersão</div><div class="q-val" style="color:#4F81BD">100%</div></div>
+            <div class="q-col"><div class="q-name">Dispersão</div><div class="q-val" style="color:#4F81BD">55%</div></div>
+            <div class="q-col"><div class="q-name">Dispersão</div><div class="q-val" style="color:#4F81BD">48%</div></div>
+            <div class="q-col"><div class="q-name">Dispersão</div><div class="q-val" style="color:#C0504D">33%</div></div>
+          </div>
+          <div class="insight" style="margin-top:14px;"><b>Atenção:</b> queda acentuada no 4º Quartil Manhã (246→35 promessas). Ponto de desenvolvimento prioritário.</div>
+        </div>
+      </div>
+
+      <!-- Estratégias 4º Quartil inline -->
+      <div style="margin-top:20px;">
+        <div style="background:var(--navy);border-radius:10px 10px 0 0;padding:10px 18px;display:flex;align-items:center;gap:8px;">
+          <span>🎯</span>
+          <span style="color:#fff;font-weight:700;font-size:0.88rem;">ESTRATÉGIAS — EQUIPE 4º QUARTIL MANHÃ</span>
+          <span style="margin-left:auto;background:var(--red);color:#fff;font-size:0.65rem;font-weight:700;padding:2px 10px;border-radius:10px;">PONTO CRÍTICO</span>
+        </div>
+        <div style="background:var(--green-light);border:1px solid var(--border);border-top:none;border-radius:0 0 10px 10px;padding:16px;">
+          <p style="font-size:0.8rem;color:var(--muted);margin-bottom:14px;">4º Quartil Manhã: <strong style="color:var(--red)">35 promessas</strong> vs 246 do 3º Quartil (queda de <strong style="color:var(--red)">−86%</strong>). Ações recomendadas:</p>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+            <div style="background:#fff;border-left:3px solid var(--green);border-radius:8px;padding:12px;"><div style="font-weight:700;font-size:0.82rem;color:var(--navy);margin-bottom:5px;">🎧 Escuta & Calibração</div><p style="font-size:0.75rem;color:var(--muted);line-height:1.5;">Revisar gravações 4ºQ vs 1ºQ. Feedback individual semanal.</p></div>
+            <div style="background:#fff;border-left:3px solid var(--green);border-radius:8px;padding:12px;"><div style="font-weight:700;font-size:0.82rem;color:var(--navy);margin-bottom:5px;">🤝 Mentoring Cruzado</div><p style="font-size:0.75rem;color:var(--muted);line-height:1.5;">Parear com top performers do 1ºQ. 2 sessões shadowing/semana.</p></div>
+            <div style="background:#fff;border-left:3px solid var(--lime);border-radius:8px;padding:12px;"><div style="font-weight:700;font-size:0.82rem;color:var(--navy);margin-bottom:5px;">📈 Micro-metas Diárias</div><p style="font-size:0.75rem;color:var(--muted);line-height:1.5;">3→5→8 promessas/dia. Celebrar cada evolução.</p></div>
+            <div style="background:#fff;border-left:3px solid var(--lime);border-radius:8px;padding:12px;"><div style="font-weight:700;font-size:0.82rem;color:var(--navy);margin-bottom:5px;">🎭 Role-Play Diário</div><p style="font-size:0.75rem;color:var(--muted);line-height:1.5;">15 min de simulação antes do turno. Treinar objeções.</p></div>
+          </div>
+          <div style="margin-top:12px;background:#fff3e0;border-left:3px solid var(--orange);padding:9px 12px;border-radius:0 6px 6px 0;font-size:0.75rem;color:#7a3d00;">
+            <b>Meta:</b> Elevar de 35 para 80+ promessas em 4 semanas (+128%) com coaching + mentoring + micro-metas.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== DIGITAL ===== -->
+    <div id="sec-digital" class="section">
+      <div class="section-header">
+        <div class="icon-box">💬</div>
+        <div>
+          <h2>Ações Digitais</h2>
+          <p>WhatsApp e Chatbot por Operação | Março → Maio 2026</p>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-bottom:20px;">
+        <div class="kpi-card"><div class="kpi-label">COPEL — WhatsApp Abr</div><div class="kpi-value" style="color:#1F497D">200</div><div class="kpi-badge badge-up">▲ Maior volume</div></div>
+        <div class="kpi-card"><div class="kpi-label">ENEL CE — Chatbot Abr</div><div class="kpi-value" style="color:#C0504D">33</div><div class="kpi-badge badge-down">▼ Queda Mar→Mai</div></div>
+      </div>
+
+      <div class="grid-2" style="margin-bottom:20px;">
+        <div class="card">
+          <h3>WhatsApp — Envios por Operação e Mês</h3>
+          <div class="chart-wrap"><canvas id="chart-wp"></canvas></div>
+          <div class="insight"><b>COPEL</b> lidera em Abril (200 envios). <b>ENEL SP</b> cresceu de 34 para 105 de Mar→Abr, porém caiu para 41 em Maio.</div>
+        </div>
+        <div class="card">
+          <h3>Chatbot — Envios ENEL por Mês</h3>
+          <div class="chart-wrap"><canvas id="chart-chatbot"></canvas></div>
+          <div class="insight"><b>ENEL CE</b> apresenta maior volume, mas queda consistente (60→26). <b>ENEL RJ</b> mantém estabilidade. <b>ENEL SP</b> cresceu em Maio.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Tabela WhatsApp — Envios por Operação</h3>
+        <table class="tbl" id="tbl-wp"></table>
+      </div>
+      <div class="card" style="margin-top:16px;">
+        <h3>Tabela Chatbot — Envios por Operação</h3>
+        <table class="tbl" id="tbl-chatbot"></table>
+      </div>
+    </div>
+
+    <!-- ===== ENCERRAMENTO ===== -->
+    <div id="sec-encerramento" class="section">
+      <div class="capa-hero" style="min-height:500px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;background:linear-gradient(135deg, var(--dark) 0%, #1B5E38 100%);">
+        <div style="font-size:3rem;margin-bottom:20px;">💡</div>
+        <p style="font-size:1.8rem;font-weight:700;line-height:1.4;margin-bottom:30px;max-width:800px;font-style:italic;color:white;">
+          “Se você criar uma ótima experiência, os clientes contam uns aos outros sobre isso. A palavra falada é muito poderosa.”
+        </p>
+        <div style="font-size:1.2rem;font-weight:800;color:var(--lime);letter-spacing:1px;text-transform:uppercase;">
+          — Jeff Bezos
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== MAPA DIGITAL ===== -->
+    <div id="sec-mapadigital" class="section">
+      <div class="section-header">
+        <div class="icon-box">🗺️</div>
+        <div><h2>Mapa de Ações Digitais</h2><p>Canais digitais ativos por operação</p></div>
+      </div>
+      <div id="mapa-digital-content"></div>
+    </div>
+
+    <!-- ===== DADOS GERAIS ===== -->
+    <div id="sec-dadosgerais" class="section">
+      <div class="section-header">
+        <div class="icon-box">📋</div>
+        <div><h2>Dados Gerais</h2><p>Indicadores operacionais consolidados por mês</p></div>
+      </div>
+      <div id="dados-gerais-content"></div>
+    </div>
+
+    <!-- FLOATING NAV -->
+    <div id="floating-nav" style="position:fixed; bottom:24px; right:36px; display:flex; gap:12px; z-index:100; background:var(--card); padding:8px 12px; border-radius:30px; box-shadow:0 4px 20px rgba(0,0,0,0.12); border:1px solid var(--border);">
+      <button class="nav-btn-float" onclick="navPrevNext(-1)" id="btn-nav-prev" disabled><span>←</span> Anterior</button>
+      <div style="width:1px; background:var(--border); margin:4px 0;"></div>
+      <button class="nav-btn-float" onclick="navPrevNext(1)" id="btn-nav-next">Próximo <span>→</span></button>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script src="logo_b64.js"></script>
+<script src="data.js"></script>
+<script src="charts.js"></script>
+<script src="ppt-helpers.js"></script>
+<script src="export-ppt.js"></script>
+<script>
+// ========================================================
+// NAVEGAÇÃO
+// ========================================================
+const SEC_TITLES = {
+  capa:'Capa — Reunião de Resultados',
+  dadosgerais:'Dados Gerais',
+  capacity:'Capacity — Agentes por Operação',
+  funil:'Funil de Conversão',
+  quartil:'Quartil 2026',
+  digital:'Ações Digitais',
+  mapadigital:'Mapa de Ações Digitais',
+  encerramento:'Mensagem Final',
+};
+
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const sec = item.dataset.sec;
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('sec-' + sec).classList.add('active');
+    item.classList.add('active');
+    document.getElementById('topbar-title').textContent = SEC_TITLES[sec];
+    if(typeof updateFloatNav === 'function') updateFloatNav();
+  });
+});
+
+function navPrevNext(dir) {
+  const items = Array.from(document.querySelectorAll('.nav-item'));
+  const idx = items.findIndex(el => el.classList.contains('active'));
+  if (idx > -1) {
+    const nextIdx = idx + dir;
+    if (nextIdx >= 0 && nextIdx < items.length) {
+      items[nextIdx].click();
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+  }
+}
+
+function updateFloatNav() {
+  const items = Array.from(document.querySelectorAll('.nav-item'));
+  const idx = items.findIndex(el => el.classList.contains('active'));
+  document.getElementById('btn-nav-prev').disabled = (idx <= 0);
+  document.getElementById('btn-nav-next').disabled = (idx >= items.length - 1);
+}
+// Init float nav
+updateFloatNav();
+
+// ========================================================
+// TABELA CAPACITY
+// ========================================================
+function renderCapacityTable() {
+  const d = DADOS.capacity;
+  const tbl = document.getElementById('tbl-capacity');
+  let html = '<thead><tr><th style="text-align:center;">Operação</th>';
+  d.meses.forEach(m => html += `<th style="text-align:center;">${m}</th>`);
+  html += '<th style="text-align:center;">Total</th></tr></thead><tbody>';
+  d.operacoes.forEach((op, i) => {
+    const total = d.valores[i].reduce((a,b)=>a+b,0);
+    html += `<tr><td style="text-align:center;">${op}</td>`;
+    d.valores[i].forEach(v => html += `<td class="num" style="text-align:center;">${v}</td>`);
+    html += `<td class="num" style="text-align:center;">${total}</td></tr>`;
+  });
+  html += '<tr>';
+  html += '<td class="total-row" style="text-align:center;">TOTAL GERAL</td>';
+  d.totais.forEach(v => html += `<td class="num total-row" style="text-align:center;">${v}</td>`);
+  html += `<td class="num total-row" style="text-align:center;">${d.totais.reduce((a,b)=>a+b,0)}</td></tr>`;
+  html += '</tbody>';
+  tbl.innerHTML = html;
+}
+renderCapacityTable();
+
+// ========================================================
+// FUNIL TABS
+// ========================================================
+let currentFunilTab = 'abrilGeral';
+
+function renderFunilTable(key) {
+  const rows = DADOS.funil[key];
+  const tbl = document.getElementById('tbl-funil');
+  let html = `<thead><tr>
+    <th>Operação</th><th>Discagens</th><th>Alô</th><th>Alô%</th>
+    <th>CPC</th><th>CPC/Alô%</th><th>Promessa</th><th>Prom/CPC%</th>
+  </tr></thead><tbody>`;
+  rows.forEach((r, i) => {
+    html += `<tr>
+      <td>${r.op}</td>
+      <td class="num">${r.disc.toLocaleString('pt-BR')}</td>
+      <td class="num">${r.alo.toLocaleString('pt-BR')}</td>
+      <td class="pct">${(r.alo_pct*100).toFixed(1)}%</td>
+      <td class="num">${r.cpc.toLocaleString('pt-BR')}</td>
+      <td class="pct">${(r.cpc_pct*100).toFixed(1)}%</td>
+      <td class="num">${r.prom.toLocaleString('pt-BR')}</td>
+      <td class="pct">${(r.prom_pct*100).toFixed(1)}%</td>
+    </tr>`;
+  });
+  html += '</tbody>';
+  tbl.innerHTML = html;
+
+  const insights = {
+    abrilGeral:'💡 ALARES PA FIXA destaca-se com <b>49,3%</b> de conversão CPC→Promessa — o melhor índice entre todas as operações em Abril.',
+    maio9Dias: '💡 Com 9 dias úteis, ALARES PA FIXA já acumula <b>2.034 promessas</b>, superando o total do mesmo período de Abril (1.400). Tendência positiva.',
+    abril9Dias:'💡 Nos primeiros 9 dias úteis de Abril, ALARES PA FIXA atingiu <b>52% de conversão</b> Promessa/CPC — performance acima do mês cheio.'
+  };
+  document.getElementById('funil-insight').innerHTML = insights[key] || '';
+}
+
+async function renderFunilImages(key) {
+  const fd = DADOS.funil[key];
+  const container = document.getElementById('funil-images-container');
+  container.innerHTML = '<div style="color:var(--muted)">⏳ Desenhando funis...</div>';
+  if (!fd || !fd.length) return;
+  const funnels = await Promise.all(fd.map(r => funnelImg(r, r.op, 260, 260)));
+  container.innerHTML = '';
+  funnels.forEach(imgData => {
+    const img = document.createElement('img');
+    img.src = imgData;
+    img.style.width = '260px';
+    img.style.height = '260px';
+    img.style.objectFit = 'contain';
+    img.style.background = '#fff';
+    img.style.borderRadius = '8px';
+    img.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
+    img.style.padding = '10px';
+    container.appendChild(img);
+  });
+}
+
+function switchFunilTab(key, btn) {
+  currentFunilTab = key;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderFunilTable(key);
+  renderFunilImages(key);
+}
+
+renderFunilTable('abrilGeral');
+renderFunilImages('abrilGeral');
+
+// ========================================================
+// TABELAS AÇÕES DIGITAIS
+// ========================================================
+function renderAcoesDigitaisTables() {
+  const wp = DADOS.acoesDigitais.whatsapp;
+  const tblWp = document.getElementById('tbl-wp');
+  let h = '<thead><tr><th>Operação</th><th style="text-align:center;">Março</th><th style="text-align:center;">Abril</th><th style="text-align:center;">Maio</th></tr></thead><tbody>';
+  wp.operacoes.forEach((op, i) => {
+    h += `<tr><td>${op}</td><td class="num" style="text-align:center;">${wp.marco[i]}</td><td class="num" style="text-align:center;">${wp.abril[i]}</td><td class="num" style="text-align:center;">${wp.maio[i]}</td></tr>`;
+  });
+  tblWp.innerHTML = h + '</tbody>';
+
+  const cb = DADOS.acoesDigitais.chatbot;
+  const tblCb = document.getElementById('tbl-chatbot');
+  h = '<thead><tr><th>Operação</th><th style="text-align:center;">Março</th><th style="text-align:center;">Abril</th><th style="text-align:center;">Maio</th></tr></thead><tbody>';
+  cb.operacoes.forEach((op, i) => {
+    h += `<tr><td>${op}</td><td class="num" style="text-align:center;">${cb.marco[i]}</td><td class="num" style="text-align:center;">${cb.abril[i]}</td><td class="num" style="text-align:center;">${cb.maio[i]}</td></tr>`;
+  });
+  tblCb.innerHTML = h + '</tbody>';
+}
+renderAcoesDigitaisTables();
+
+// ========================================================
+// DADOS GERAIS — RENDER
+// ========================================================
+function renderDadosGerais() {
+  const d = DADOS.dadosGerais;
+  const c = document.getElementById('dados-gerais-content');
+  if (!d || !d.indicadores) { c.innerHTML = '<p style="color:var(--muted)">Dados não disponíveis. Faça upload da planilha.</p>'; return; }
+
+  const fmt = (v, ind) => {
+    if (v === null || v === undefined) return '—';
+    const s = String(ind).toLowerCase();
+    if (s.includes('abs') || s.includes('pausa') || s.includes('mc') || s.includes('qual') || s.includes('turn') || s.includes('tempo')) {
+      if (Math.abs(v) <= 2) return (v*100).toFixed(1).replace('.', ',') + '%';
+      return Number(v).toFixed(1).replace('.', ',') + '%';
+    }
+    return v;
+  };
+
+  let html = `<div class="card"><h3>Indicadores Operacionais — Visão Mensal</h3>
+    <table class="tbl"><thead><tr><th style="text-align:left;">INDICADOR</th>`;
+  d.meses.forEach(m => html += `<th style="text-align:center;">${m}</th>`);
+  html += `</tr></thead><tbody>`;
+  d.indicadores.forEach((ind, i) => {
+    const meta = d.metas?.[i];
+    html += `<tr><td><strong>${ind}</strong></td>`;
+    d.valores[i].forEach(v => {
+      const display = fmt(v, ind);
+      let cls = 'style="text-align:center;"';
+      if (v !== null) {
+        let bad = null;
+        if (meta !== null && meta !== undefined) {
+          let valToCompare = v;
+          // Normaliza se a meta for decimal (<=1) e o valor não for (ex: meta 0.95 e valor 93)
+          if (Math.abs(v) > 2 && Math.abs(meta) <= 1) {
+            valToCompare = v / 100;
+          } else if (Math.abs(v) <= 2 && Math.abs(meta) > 1) {
+            valToCompare = v * 100;
+          }
+          
+          bad = (ind.toLowerCase().includes('abs') || ind.toLowerCase().includes('pausa') || ind.toLowerCase().includes('turn')) ? valToCompare > meta : valToCompare < meta;
+        } else if (ind.toLowerCase().includes('mc')) {
+          bad = v < 0;
+        }
+        
+        if (bad !== null) {
+          cls = bad ? 'style="color:var(--red);font-weight:700;text-align:center;"' : 'style="color:var(--green);font-weight:700;text-align:center;"';
+        }
+      }
+      html += `<td class="num" ${cls}>${display}</td>`;
+    });
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  if (d.indicadores.some((ind,i) => d.metas?.[i] !== null)) {
+    html += `<div class="insight" style="margin-top:12px;">🟢 Verde = dentro da meta &nbsp;|&nbsp; 🔴 Vermelho = fora da meta</div>`;
+  }
+  html += '</div>';
+  c.innerHTML = html;
+}
+renderDadosGerais();
+
+// ========================================================
+// MAPA DE AÇÕES DIGITAIS — RENDER
+// ========================================================
+function renderMapaDigital() {
+  const d = DADOS.mapaDigital;
+  const el = document.getElementById('mapa-digital-content');
+  if (!d || !el) return;
+  const icons = {SMS:'📱',Email:'📧',WhatsApp:'💬',AGV:'🤖',URA:'📞',Portal:'🌐',Chatbot:'💡'};
+  const cores = {SMS:'#1B5E38',Email:'#2E7D4F',WhatsApp:'#25D366',AGV:'#5FAD41',URA:'#8DC642',Portal:'#4BACC6',Chatbot:'#F79646'};
+  const totC = d.canais.map((_,ci)=>d.operacoes.filter(o=>o.canais[ci]).length);
+  const totO = d.operacoes.map(o=>o.canais.filter(Boolean).length);
+
+  let h = '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:10px;margin-bottom:24px;">';
+  d.canais.forEach((c,ci)=>{
+    const pct=Math.round(totC[ci]/d.operacoes.length*100);
+    h+=`<div style="background:#fff;border-radius:12px;padding:14px 8px;border:1px solid var(--border);border-top:4px solid ${cores[c]||'#1B5E38'};text-align:center;box-shadow:0 2px 8px rgba(27,94,56,0.06);">
+      <div style="font-size:1.4rem;margin-bottom:4px;">${icons[c]||'📡'}</div>
+      <div style="font-size:0.72rem;font-weight:700;color:var(--navy);margin-bottom:4px;">${c}</div>
+      <div style="font-size:1.6rem;font-weight:900;color:${cores[c]||'#1B5E38'};">${totC[ci]}</div>
+      <div style="font-size:0.62rem;color:var(--muted);">${pct}% das ops</div>
+    </div>`;
+  });
+  h += '</div>';
+
+  h += `<div class="card"><h3 style="margin-bottom:16px;">Cobertura de Canais por Operação</h3><div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:0.8rem;">
+    <thead><tr><th style="background:var(--navy);color:#fff;padding:10px 14px;text-align:left;border-radius:8px 0 0 0;font-size:0.75rem;">OPERAÇÃO</th>`;
+  d.canais.forEach(c=>{ h+=`<th style="background:var(--navy);color:#fff;padding:8px 6px;text-align:center;font-size:0.72rem;min-width:65px;">${icons[c]||''}<br>${c}</th>`; });
+  h+=`<th style="background:var(--navy);color:#fff;padding:8px 10px;text-align:center;border-radius:0 8px 0 0;font-size:0.75rem;">SCORE</th></tr></thead><tbody>`;
+
+  d.operacoes.forEach((op,oi)=>{
+    const tot=totO[oi], pct=Math.round(tot/d.canais.length*100);
+    h+=`<tr style="background:${oi%2===0?'#fff':'#f4fbf6'};"><td style="padding:10px 14px;font-weight:600;color:var(--navy);border-bottom:1px solid #d8eede;">${op.op}</td>`;
+    op.canais.forEach((ativo,ci)=>{
+      const cor=ativo?(cores[d.canais[ci]]||'#1B5E38'):'#eeeeee';
+      h+=`<td style="padding:8px 6px;text-align:center;border-bottom:1px solid #d8eede;">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;background:${cor};color:#fff;font-weight:700;font-size:0.85rem;${ativo?'box-shadow:0 2px 6px rgba(0,0,0,0.15);':'opacity:0.15;'}">${ativo?'✓':''}</span>
+      </td>`;
+    });
+    const barColor=pct>=70?'var(--green)':pct>=40?'var(--lime)':'var(--orange)';
+    h+=`<td style="padding:8px 14px;border-bottom:1px solid #d8eede;min-width:110px;">
+      <div style="display:flex;align-items:center;gap:6px;">
+        <div style="flex:1;background:#e8f5ed;border-radius:20px;height:8px;overflow:hidden;"><div style="width:${pct}%;background:${barColor};height:100%;border-radius:20px;"></div></div>
+        <span style="font-size:0.72rem;font-weight:700;color:var(--navy);">${tot}/${d.canais.length}</span>
+      </div></td></tr>`;
+  });
+
+  h+=`<tr style="background:var(--green-light);"><td style="padding:10px 14px;font-weight:800;color:var(--navy);">TOTAL / CANAL</td>`;
+  totC.forEach(t=>{ h+=`<td style="padding:10px 6px;text-align:center;font-weight:700;color:var(--navy);">${t}</td>`; });
+  h+=`<td style="padding:10px 14px;text-align:center;font-weight:800;color:var(--navy);">${d.operacoes.length}</td></tr>`;
+  h+=`</tbody></table></div>`;
+  const alta=d.operacoes.filter((_,i)=>totO[i]>=5).map(o=>o.op);
+  const baixa=d.operacoes.filter((_,i)=>totO[i]<=1).map(o=>o.op);
+  h+=`<div class="insight" style="margin-top:14px;"><b>Alta cobertura (5+ canais):</b> ${alta.join(', ')||'—'} &nbsp;|&nbsp; <b>Baixa cobertura (≤1 canal):</b> ${baixa.join(', ')||'—'} — potencial de expansão digital.</div></div>`;
+  el.innerHTML = h;
+}
+renderMapaDigital();
+
+// ========================================================
+// LOGO BASE64 INJECTION
+// ========================================================
+if (typeof LOGO_B64 !== 'undefined') {
+  document.getElementById('sidebar-logo-img').src = LOGO_B64;
+  document.getElementById('topbar-logo-img').src = LOGO_B64;
+  document.getElementById('capa-logo-img').src = LOGO_B64;
+}
+
+// ========================================================
+// RENDER ALL (Acionado pelo Firebase)
+// ========================================================
+window.renderAll = function() {
+  if (DADOS.periodo) {
+    document.getElementById('capa-periodo').textContent = DADOS.periodo;
+    document.getElementById('topbar-periodo').textContent = 'Período de Referência: ' + DADOS.periodo;
+  }
+  renderCapacityTable();
+  if (typeof buildCapacityChart === 'function') buildCapacityChart();
+  
+  renderFunilTable(currentFunilTab);
+  renderFunilImages(currentFunilTab);
+  if (typeof buildFunilCharts === 'function') buildFunilCharts(currentFunilTab);
+  if (typeof buildQuartilChart === 'function') {
+    buildQuartilChart('tarde');
+    buildQuartilChart('manha');
+  }
+  
+  renderAcoesDigitaisTables();
+  if (typeof buildAcoesDigitaisCharts === 'function') buildAcoesDigitaisCharts();
+  renderMapaDigital();
+  renderDadosGerais();
+};
+
+// ========================================================
+// UPLOAD EXCEL
+// ========================================================
+document.getElementById('upload-excel').addEventListener('change', async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const status = document.getElementById('upload-status');
+  status.textContent = '⏳ Lendo planilha... e subindo para nuvem';
+  try {
+    await lerExcel(file);
+    // Força atualização da interface localmente agora mesmo
+    if (typeof window.renderAll === 'function') {
+      window.renderAll();
+    }
+    status.textContent = '✅ Dados atualizados na Nuvem!';
+    setTimeout(() => { status.textContent = ''; }, 4000);
+  } catch(err) {
+    status.textContent = '❌ Erro: ' + err.message;
+    console.error(err);
+  }
+  e.target.value = '';
+});
+</script>
+</body>
+</html>
