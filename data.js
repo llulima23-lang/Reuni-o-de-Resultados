@@ -98,7 +98,8 @@ const firebaseConfig = {
   projectId: "rr2026-127c2",
   storageBucket: "rr2026-127c2.firebasestorage.app",
   messagingSenderId: "306089663556",
-  appId: "1:306089663556:web:57d224233e1e06ebe33011"
+  appId: "1:306089663556:web:57d224233e1e06ebe33011",
+  databaseURL: "https://rr2026-127c2-default-rtdb.firebaseio.com"
 };
 
 // Inicializa o Firebase

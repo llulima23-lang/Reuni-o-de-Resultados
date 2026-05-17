@@ -625,10 +625,12 @@ document.getElementById('upload-excel').addEventListener('change', async (e) => 
   status.textContent = '⏳ Lendo planilha... e subindo para nuvem';
   try {
     await lerExcel(file);
+    // Força atualização da interface localmente agora mesmo
+    if (typeof window.renderAll === 'function') {
+      window.renderAll();
+    }
     status.textContent = '✅ Dados atualizados na Nuvem!';
     setTimeout(() => { status.textContent = ''; }, 4000);
-    // Não damos mais location.reload(), pois o listener on('value') do Firebase
-    // que configuramos no data.js vai captar a mudança e chamar window.renderAll() automaticamente!
   } catch(err) {
     status.textContent = '❌ Erro: ' + err.message;
     console.error(err);
