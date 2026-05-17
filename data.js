@@ -89,6 +89,15 @@ let DADOS = {
   periodo: 'Abril / Maio 2026'
 };
 
+try {
+  const savedDados = localStorage.getItem('MF_DADOS_2026');
+  if (savedDados) {
+    DADOS = JSON.parse(savedDados);
+  }
+} catch(e) {
+  console.error('Erro ao ler DADOS do localStorage', e);
+}
+
 // ============================================================
 // PARSER DE EXCEL (SheetJS) — atualiza DADOS dinamicamente
 // ============================================================
@@ -209,9 +218,19 @@ async function lerExcel(file) {
             inds.push(String(row[0]));
             const rv=[]; for(let c=1;c<=meses.length;c++) rv.push(row[c]!==undefined&&row[c]!==null?Number(row[c]):null);
             vals.push(rv);
-            // extrai meta do nome se houver (ex: "ABS- 2%")
-            const m=String(row[0]).match(/(\d+(?:\.\d+)?)\s*%/);
-            metas.push(m?Number(m[1])/100:null);
+            // extrai meta do nome se houver (ex: "ABS- 2%" ou "meta 10")
+            let metaVal = null;
+            const text = String(row[0]);
+            // Tenta achar "meta X%" ou "X%"
+            let m = text.match(/(-?\d+(?:\.\d+)?)\s*%/);
+            if (m) {
+              metaVal = Number(m[1]) / 100;
+            } else {
+              // Tenta achar "meta X"
+              m = text.match(/meta\s*(-?\d+(?:\.\d+)?)/i);
+              if (m) metaVal = Number(m[1]);
+            }
+            metas.push(metaVal);
           }
           if(inds.length) DADOS.dadosGerais={indicadores:inds,meses,valores:vals,metas};
         }
@@ -222,6 +241,13 @@ async function lerExcel(file) {
           const rows=[]; 
           for(const r of digiraw) if(r&&r.some(v=>v!==null&&v!=='')) rows.push(r);
           DADOS.digital=rows;
+        }
+
+        // Salvar no localStorage para manter os dados no refresh
+        try {
+          localStorage.setItem('MF_DADOS_2026', JSON.stringify(DADOS));
+        } catch (e) {
+          console.error("Erro ao salvar no localStorage", e);
         }
 
         resolve(true);
