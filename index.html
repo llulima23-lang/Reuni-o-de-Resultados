@@ -498,9 +498,17 @@ function renderDadosGerais() {
     d.valores[i].forEach(v => {
       const display = fmt(v, ind);
       let cls = 'style="text-align:center;"';
-      if (v !== null && meta !== null && meta !== undefined) {
-        const bad = (ind.toLowerCase().includes('abs') || ind.toLowerCase().includes('pausa') || ind.toLowerCase().includes('turn')) ? v > meta : v < meta;
-        cls = bad ? 'style="color:var(--red);font-weight:700;text-align:center;"' : 'style="color:var(--green);font-weight:700;text-align:center;"';
+      if (v !== null) {
+        let bad = null;
+        if (meta !== null && meta !== undefined) {
+          bad = (ind.toLowerCase().includes('abs') || ind.toLowerCase().includes('pausa') || ind.toLowerCase().includes('turn')) ? v > meta : v < meta;
+        } else if (ind.toLowerCase().includes('mc')) {
+          bad = v < 0;
+        }
+        
+        if (bad !== null) {
+          cls = bad ? 'style="color:var(--red);font-weight:700;text-align:center;"' : 'style="color:var(--green);font-weight:700;text-align:center;"';
+        }
       }
       html += `<td class="num" ${cls}>${display}</td>`;
     });
