@@ -501,7 +501,15 @@ function renderDadosGerais() {
       if (v !== null) {
         let bad = null;
         if (meta !== null && meta !== undefined) {
-          bad = (ind.toLowerCase().includes('abs') || ind.toLowerCase().includes('pausa') || ind.toLowerCase().includes('turn')) ? v > meta : v < meta;
+          let valToCompare = v;
+          // Normaliza se a meta for decimal (<=1) e o valor não for (ex: meta 0.95 e valor 93)
+          if (Math.abs(v) > 2 && Math.abs(meta) <= 1) {
+            valToCompare = v / 100;
+          } else if (Math.abs(v) <= 2 && Math.abs(meta) > 1) {
+            valToCompare = v * 100;
+          }
+          
+          bad = (ind.toLowerCase().includes('abs') || ind.toLowerCase().includes('pausa') || ind.toLowerCase().includes('turn')) ? valToCompare > meta : valToCompare < meta;
         } else if (ind.toLowerCase().includes('mc')) {
           bad = v < 0;
         }
