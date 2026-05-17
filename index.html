@@ -361,19 +361,19 @@ updateFloatNav();
 (function() {
   const d = DADOS.capacity;
   const tbl = document.getElementById('tbl-capacity');
-  let html = '<thead><tr><th>Operação</th>';
-  d.meses.forEach(m => html += `<th>${m}</th>`);
-  html += '<th>Total</th></tr></thead><tbody>';
+  let html = '<thead><tr><th style="text-align:center;">Operação</th>';
+  d.meses.forEach(m => html += `<th style="text-align:center;">${m}</th>`);
+  html += '<th style="text-align:center;">Total</th></tr></thead><tbody>';
   d.operacoes.forEach((op, i) => {
     const total = d.valores[i].reduce((a,b)=>a+b,0);
-    html += `<tr><td>${op}</td>`;
-    d.valores[i].forEach(v => html += `<td class="num">${v}</td>`);
-    html += `<td class="num">${total}</td></tr>`;
+    html += `<tr><td style="text-align:center;">${op}</td>`;
+    d.valores[i].forEach(v => html += `<td class="num" style="text-align:center;">${v}</td>`);
+    html += `<td class="num" style="text-align:center;">${total}</td></tr>`;
   });
   html += '<tr>';
-  html += '<td class="total-row">TOTAL GERAL</td>';
-  d.totais.forEach(v => html += `<td class="num total-row">${v}</td>`);
-  html += `<td class="num total-row">${d.totais.reduce((a,b)=>a+b,0)}</td></tr>`;
+  html += '<td class="total-row" style="text-align:center;">TOTAL GERAL</td>';
+  d.totais.forEach(v => html += `<td class="num total-row" style="text-align:center;">${v}</td>`);
+  html += `<td class="num total-row" style="text-align:center;">${d.totais.reduce((a,b)=>a+b,0)}</td></tr>`;
   html += '</tbody>';
   tbl.innerHTML = html;
 })();
