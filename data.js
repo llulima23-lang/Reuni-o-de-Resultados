@@ -21,11 +21,13 @@ let DADOS = {
       {op:'ALARES VARIÁVEL',disc:608040, alo:5429,  alo_pct:0.0089, cpc:2284, cpc_pct:0.4207, prom:484,  prom_pct:0.2119},
       {op:'ALARES PA FIXA',disc:201566, alo:15458, alo_pct:0.0767, cpc:4536, cpc_pct:0.2934, prom:2034, prom_pct:0.4484},
       {op:'M.DIAS',        disc:56121,  alo:963,   alo_pct:0.0172, cpc:298,  cpc_pct:0.3094, prom:23,   prom_pct:0.0772},
+      {op:'AGORACRED',     disc:0, alo:0, alo_pct:0, cpc:0, cpc_pct:0, prom:0, prom_pct:0},
     ],
     abril9Dias: [
       {op:'ALARES VARIÁVEL',disc:627763, alo:5884,  alo_pct:0.0094, cpc:2494, cpc_pct:0.4239, prom:456,  prom_pct:0.1828},
       {op:'ALARES PA FIXA',disc:162912, alo:9385,  alo_pct:0.0576, cpc:2692, cpc_pct:0.2868, prom:1400, prom_pct:0.5201},
       {op:'M.DIAS',        disc:52888,  alo:916,   alo_pct:0.0173, cpc:261,  cpc_pct:0.2849, prom:15,   prom_pct:0.0575},
+      {op:'AGORACRED',     disc:0, alo:0, alo_pct:0, cpc:0, cpc_pct:0, prom:0, prom_pct:0},
     ]
   },
   quartil: {
@@ -154,12 +156,16 @@ async function lerExcel(file) {
         // FUNIL
         const fun = toArr('FUNIL');
         if (fun) {
-          const parseFunil=(raw, startRow)=>{
+          const parseFunil=(raw, startRow, endRow)=>{
             const result=[];
-            for(let r=startRow;r<Math.min(startRow+8,raw.length);r++){
-              const row=raw[r]; if(!row||!row[0]) continue;
+            for(let r=startRow;r<endRow;r++){
+              const row=raw[r]; 
+              if(!row||!row[0]) continue;
+              const opName = String(row[0]).trim();
+              if(opName === '' || opName.toLowerCase().includes('dias úteis') || opName.toLowerCase().includes('geral')) continue;
+              
               result.push({
-                op:String(row[0]),
+                op:opName,
                 disc:Number(row[1]||0), alo:Number(row[2]||0), alo_pct:Number(row[3]||0),
                 cpc:Number(row[4]||0), cpc_pct:Number(row[5]||0),
                 prom:Number(row[6]||0), prom_pct:Number(row[7]||0)
@@ -168,16 +174,22 @@ async function lerExcel(file) {
             return result;
           };
           // Detecta blocos pelo header
-          let abrilRow=1, maio9Row=10, abril9Row=20;
+          let abrilRow=-1, maio9Row=-1, abril9Row=-1;
           for(let r=0;r<fun.length;r++){
             const cell=String(fun[r]?.[0]||'').toLowerCase();
             if(cell.includes('geral')) abrilRow=r+1;
-            if(cell.includes('maio')&&cell.includes('9')) maio9Row=r+1;
-            if(cell.includes('abril')&&cell.includes('9')) abril9Row=r+1;
+            else if(cell.includes('maio')&&cell.includes('9')) maio9Row=r+1;
+            else if(cell.includes('abril')&&cell.includes('9')) abril9Row=r+1;
           }
-          const ag=parseFunil(fun,abrilRow); if(ag.length) DADOS.funil.abrilGeral=ag;
-          const m9=parseFunil(fun,maio9Row); if(m9.length) DADOS.funil.maio9Dias=m9;
-          const a9=parseFunil(fun,abril9Row); if(a9.length) DADOS.funil.abril9Dias=a9;
+          
+          const getEnd = (start) => {
+             const starts = [abrilRow, maio9Row, abril9Row].filter(x => x > start);
+             return starts.length ? Math.min(...starts) - 1 : Math.min(start+20, fun.length);
+          };
+
+          if(abrilRow>0) DADOS.funil.abrilGeral=parseFunil(fun,abrilRow,getEnd(abrilRow));
+          if(maio9Row>0) DADOS.funil.maio9Dias=parseFunil(fun,maio9Row,getEnd(maio9Row));
+          if(abril9Row>0) DADOS.funil.abril9Dias=parseFunil(fun,abril9Row,getEnd(abril9Row));
         }
 
         // QUARTIL2026
