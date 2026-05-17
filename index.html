@@ -9,6 +9,8 @@
   <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
@@ -358,7 +360,7 @@ updateFloatNav();
 // ========================================================
 // TABELA CAPACITY
 // ========================================================
-(function() {
+function renderCapacityTable() {
   const d = DADOS.capacity;
   const tbl = document.getElementById('tbl-capacity');
   let html = '<thead><tr><th style="text-align:center;">Operação</th>';
@@ -376,7 +378,8 @@ updateFloatNav();
   html += `<td class="num total-row" style="text-align:center;">${d.totais.reduce((a,b)=>a+b,0)}</td></tr>`;
   html += '</tbody>';
   tbl.innerHTML = html;
-})();
+}
+renderCapacityTable();
 
 // ========================================================
 // FUNIL TABS
@@ -448,7 +451,7 @@ renderFunilImages('abrilGeral');
 // ========================================================
 // TABELAS AÇÕES DIGITAIS
 // ========================================================
-(function() {
+function renderAcoesDigitaisTables() {
   const wp = DADOS.acoesDigitais.whatsapp;
   const tblWp = document.getElementById('tbl-wp');
   let h = '<thead><tr><th>Operação</th><th style="text-align:center;">Março</th><th style="text-align:center;">Abril</th><th style="text-align:center;">Maio</th></tr></thead><tbody>';
@@ -464,7 +467,8 @@ renderFunilImages('abrilGeral');
     h += `<tr><td>${op}</td><td class="num" style="text-align:center;">${cb.marco[i]}</td><td class="num" style="text-align:center;">${cb.abril[i]}</td><td class="num" style="text-align:center;">${cb.maio[i]}</td></tr>`;
   });
   tblCb.innerHTML = h + '</tbody>';
-})();
+}
+renderAcoesDigitaisTables();
 
 // ========================================================
 // DADOS GERAIS — RENDER
@@ -578,28 +582,37 @@ if (typeof LOGO_B64 !== 'undefined') {
 }
 
 // ========================================================
+// RENDER ALL (Acionado pelo Firebase)
+// ========================================================
+window.renderAll = function() {
+  if (DADOS.periodo) {
+    document.getElementById('capa-periodo').textContent = DADOS.periodo;
+    document.getElementById('topbar-periodo').textContent = 'Período de Referência: ' + DADOS.periodo;
+  }
+  renderCapacityTable();
+  if (typeof buildCapacityChart === 'function') buildCapacityChart();
+  renderFunilTable(currentFunilTab);
+  renderFunilImages(currentFunilTab);
+  renderAcoesDigitaisTables();
+  if (typeof buildAcoesDigitaisCharts === 'function') buildAcoesDigitaisCharts();
+  renderMapaDigital();
+  renderDadosGerais();
+};
+
+// ========================================================
 // UPLOAD EXCEL
 // ========================================================
 document.getElementById('upload-excel').addEventListener('change', async (e) => {
   const file = e.target.files[0];
   if (!file) return;
   const status = document.getElementById('upload-status');
-  status.textContent = '⏳ Lendo planilha...';
+  status.textContent = '⏳ Lendo planilha... e subindo para nuvem';
   try {
     await lerExcel(file);
-    status.textContent = '✅ Dados atualizados!';
-    // Re-renderiza tudo
+    status.textContent = '✅ Dados atualizados na Nuvem!';
     setTimeout(() => { status.textContent = ''; }, 4000);
-    // Atualiza período na capa
-    if (DADOS.periodo) document.getElementById('capa-periodo').textContent = DADOS.periodo;
-    // Re-renderiza dados gerais
-    renderDadosGerais();
-    // Re-inicializa gráficos
-    buildCapacityChart();
-    renderFunilImages('abrilGeral');
-    buildAcoesDigitaisCharts();
-    // Re-renderiza tabelas
-    location.reload(); // reload simples para garantir tudo atualizado
+    // Não damos mais location.reload(), pois o listener on('value') do Firebase
+    // que configuramos no data.js vai captar a mudança e chamar window.renderAll() automaticamente!
   } catch(err) {
     status.textContent = '❌ Erro: ' + err.message;
     console.error(err);

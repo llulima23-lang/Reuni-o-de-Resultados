@@ -89,14 +89,35 @@ let DADOS = {
   periodo: 'Abril / Maio 2026'
 };
 
-try {
-  const savedDados = localStorage.getItem('MF_DADOS_2026');
-  if (savedDados) {
-    DADOS = JSON.parse(savedDados);
-  }
-} catch(e) {
-  console.error('Erro ao ler DADOS do localStorage', e);
+// ============================================================
+// CONFIGURAÇÃO DO FIREBASE (Sincronização em Nuvem Real-Time)
+// ============================================================
+const firebaseConfig = {
+  apiKey: "AIzaSyDfJc_gjYOBdnGRSw9q71TzBttXAi-07cw",
+  authDomain: "rr2026-127c2.firebaseapp.com",
+  projectId: "rr2026-127c2",
+  storageBucket: "rr2026-127c2.firebasestorage.app",
+  messagingSenderId: "306089663556",
+  appId: "1:306089663556:web:57d224233e1e06ebe33011"
+};
+
+// Inicializa o Firebase
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
 }
+const db = firebase.database();
+
+// Tenta ler os dados do Firebase
+db.ref('dashboard/DADOS').on('value', (snapshot) => {
+  const cloudData = snapshot.val();
+  if (cloudData) {
+    DADOS = cloudData;
+    // Se a função renderAll estiver disponível (definida no index.html), nós a chamamos para atualizar a tela
+    if (typeof window.renderAll === 'function') {
+      window.renderAll();
+    }
+  }
+});
 
 // ============================================================
 // PARSER DE EXCEL (SheetJS) — atualiza DADOS dinamicamente
@@ -243,11 +264,12 @@ async function lerExcel(file) {
           DADOS.digital=rows;
         }
 
-        // Salvar no localStorage para manter os dados no refresh
+        // Salvar no Firebase para manter os dados no refresh e propagar para todos
         try {
-          localStorage.setItem('MF_DADOS_2026', JSON.stringify(DADOS));
+          db.ref('dashboard/DADOS').set(DADOS);
+          localStorage.setItem('MF_DADOS_2026', JSON.stringify(DADOS)); // fallback opcional
         } catch (e) {
-          console.error("Erro ao salvar no localStorage", e);
+          console.error("Erro ao salvar no Firebase/localStorage", e);
         }
 
         resolve(true);
